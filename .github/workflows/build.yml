@@ -1,21 +1,18 @@
-# Tên của workflow, sẽ hiển thị trên tab "Actions" của GitHub
-name: Build LinhTienPlugin
+# Tên của workflow
+name: Build LinhTienPlugin with Gradle
 
-# Điều kiện kích hoạt workflow
+# Điều kiện kích hoạt
 on:
-  # Chạy khi có code được push lên nhánh 'main'
   push:
     branches: [ "main" ]
-  # Cũng cho phép chạy thủ công từ tab Actions
   workflow_dispatch:
 
-# Các công việc (jobs) sẽ được thực hiện
+# Các công việc
 jobs:
   build:
     # Sử dụng máy ảo Ubuntu phiên bản mới nhất
     runs-on: ubuntu-latest
 
-    # Các bước (steps) trong công việc 'build'
     steps:
       # Bước 1: Tải mã nguồn từ repository của bạn vào máy ảo
       - name: Checkout repository
@@ -27,20 +24,26 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven # Bật cache cho Maven để các lần build sau nhanh hơn
+      
+      # Bước 3: Thiết lập Gradle (thay thế cho Maven)
+      # Bước này sẽ tự động cache các dependency của Gradle để build nhanh hơn
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-      # Bước 3: Build project bằng Maven
-      # Chạy lệnh build, -B là chế độ batch (không tương tác)
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      # Bước 4: Cấp quyền thực thi cho Gradle Wrapper
+      # Đây là bước quan trọng để action có thể chạy lệnh build
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-      # Bước 4: Tải lên artifact (file .jar đã build)
-      # Lưu file .jar đã hoàn thành để bạn có thể tải về
+      # Bước 5: Build project bằng Gradle Wrapper
+      # Thay thế hoàn toàn lệnh 'mvn'
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Bước 6: Tải lên artifact (file .jar đã build)
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          # Tên của artifact khi tải lên
           name: LinhTienPluginVipBoRo-Build
-          # Đường dẫn tới file cần tải lên.
-          # 'target/*.jar' sẽ tự động tìm file .jar duy nhất trong thư mục target.
-          path: target/*.jar
+          # File jar của Gradle nằm trong thư mục build/libs/
+          path: build/libs/*.jar
