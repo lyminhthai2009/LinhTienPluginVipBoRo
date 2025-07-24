@@ -1,0 +1,98 @@
+package me.yogurt0811.linhtien.practice;
+
+import me.yogurt0811.linhtien.LinhTienPlugin;
+import me.yogurt0811.linhtien.data.PlayerData;
+import me.yogurt0811.linhtien.talents.Talent;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+public class PracticeManager {
+    private final LinhTienPlugin plugin;
+    private final Set<UUID> practicingPlayers = new HashSet<>();
+    private BukkitTask practiceTask;
+
+    private double expPerSecond;
+    private boolean visualsEnabled;
+    private Particle particle; // Chỉ còn particle đơn giản
+    
+    // Loại bỏ các biến liên quan đến ParticleUtil
+    // private String visualType;
+    // private double circleRadius;
+    // private int circlePoints;
+    // private double circleSpeed;
+    // private double currentAngle = 0;
+
+    public PracticeManager(LinhTienPlugin plugin) {
+        this.plugin = plugin;
+        reload();
+    }
+
+    public void reload() {
+        if (practiceTask != null) {
+            practiceTask.cancel();
+        }
+        
+        ConfigurationSection config = plugin.getConfigManager().getConfig();
+        this.expPerSecond = config.getDouble("practice.exp-per-second", 10);
+        
+        // Revert về cách xử lý particle đơn giản
+        this.visualsEnabled = config.getBoolean("practice.visuals.enabled", true);
+        try {
+            this.particle = Particle.valueOf(config.getString("practice.visuals.particle", "ENCHANTMENT_TABLE").toUpperCase());
+        } catch (Exception e) {
+            this.particle = Particle.ENCHANTMENT_TABLE;
+            plugin.getLogger().warning("Particle không hợp lệ trong practice.visuals, đã đặt về mặc định.");
+        }
+
+        startPracticeTask();
+    }
+
+    public void togglePractice(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (practicingPlayers.contains(uuid)) {
+            practicingPlayers.remove(uuid);
+        } else {
+            practicingPlayers.add(uuid);
+        }
+    }
+
+    public boolean isPracticing(Player player) {
+        return practicingPlayers.contains(player.getUniqueId());
+    }
+
+    private void startPracticeTask() {
+        practiceTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (UUID uuid : new HashSet<>(practicingPlayers)) {
+                    Player player = plugin.getServer().getPlayer(uuid);
+                    if (player == null || !player.isOnline()) {
+                        practicingPlayers.remove(uuid);
+                        continue;
+                    }
+                    
+                    if (plugin.getServer().getCurrentTick() % 10 == 0) { // Chạy 2 lần/giây
+                        PlayerData data = plugin.getPlayerDataManager().getPlayerData(player);
+                        if (data == null) continue;
+                        Talent talent = plugin.getTalentManager().getTalent(data.getTalentId());
+                        double bonus = (talent != null) ? talent.expBonus() : 1.0;
+                        data.addExp((expPerSecond / 2.0) * bonus);
+                    }
+
+                    if (visualsEnabled) {
+                        // Chỉ spawn particle ngẫu nhiên đơn giản
+                        player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), 1, 0.5, 0.5, 0.5, 0);
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L); // Chạy mỗi tick
+    }
+}

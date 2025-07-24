@@ -1,0 +1,52 @@
+package me.yogurt0811.linhtien.listeners;
+
+import me.yogurt0811.linhtien.LinhTienPlugin;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+public class PlayerConnectionListener implements Listener {
+    private final LinhTienPlugin plugin;
+
+    public PlayerConnectionListener(LinhTienPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Tải dữ liệu người chơi
+            plugin.getPlayerDataManager().loadPlayerData(player);
+
+            // Chỉ give item kỹ năng và cập nhật hotbar nếu hệ thống được bật
+            if (plugin.isSkillsEnabled()) {
+                // Phải chạy lại trên thread chính để tương tác với inventory của người chơi
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    // Kiểm tra null để đảm bảo an toàn tuyệt đối
+                    if (plugin.getPlayerSkillItemManager() != null) {
+                        plugin.getPlayerSkillItemItemManager().giveOrUpdatePlayerSkillItems(player);
+                    }
+                });
+            }
+        });
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        // Logic dừng tu luyện sẽ được xử lý ở Phần 2.
+        // Tạm thời để trống hoặc dùng logic cũ
+        if (plugin.getPracticeManager().isPracticing(player)) {
+            // Sẽ thay đổi logic này thành stopPractice() ở phần sau
+            plugin.getPracticeManager().togglePractice(player); 
+        }
+        
+        // Lưu dữ liệu khi người chơi thoát
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            plugin.getPlayerDataManager().unloadPlayerData(player);
+        });
+    }
+}

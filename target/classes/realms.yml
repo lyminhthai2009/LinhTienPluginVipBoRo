@@ -1,0 +1,64 @@
+# Danh sách các cảnh giới tu vi, sắp xếp từ thấp đến cao.
+realms:
+  - id: 'pham_nhan'
+    display-name: '&7Phàm Nhân'
+    exp-to-next: 1000
+    stats:
+      health-bonus: 0.0
+      damage-bonus: 0.0
+      defense-bonus: 0.0
+      max-mana: 100
+      mana-regen: 2
+    phases:
+      - display-name: ''
+        exp-threshold: 0.0
+  - id: 'luyen_khi'
+    display-name: '&aLuyện Khí Kỳ'
+    exp-to-next: 10000
+    stats:
+      health-bonus: 10.0
+      damage-bonus: 2.0
+      defense-bonus: 0.04
+      max-mana: 500
+      mana-regen: 5
+    phases:
+      - display-name: '&aLuyện Khí Sơ Kỳ'
+        exp-threshold: 0.0
+      - display-name: '&aLuyện Khí Trung Kỳ'
+        exp-threshold: 0.33
+      - display-name: '&aLuyện Khí Hậu Kỳ'
+        exp-threshold: 0.66
+  - id: 'truc_co'
+    display-name: '&bTrúc Cơ Kỳ'
+    exp-to-next: 50000
+    stats:
+      health-bonus: 20.0
+      damage-bonus: 5.0
+      defense-bonus: 0.08
+      max-mana: 1500
+      mana-regen: 10
+    phases:
+      - display-name: '&bTrúc Cơ Sơ Kỳ'
+        exp-threshold: 0.0
+      - display-name: '&bTrúc Cơ Trung Kỳ'
+        exp-threshold: 0.33
+      - display-name: '&bTrúc Cơ Hậu Kỳ'
+        exp-threshold: 0.66
+  - id: 'kim_dan'
+    display-name: '&eKim Đan Kỳ'
+    exp-to-next: 250000
+    stats:
+      health-bonus: 40.0
+      damage-bonus: 10.0
+      defense-bonus: 0.15
+      max-mana: 5000
+      mana-regen: 25
+    phases:
+      - display-name: '&eKim Đan Sơ Kỳ'
+        exp-threshold: 0.0
+      - display-name: '&eKim Đan Trung Kỳ'
+        exp-threshold: 0.40
+      - display-name: '&eKim Đan Hậu Kỳ'
+        exp-threshold: 0.75
+      - display-name: '&6&lKim Đan Viên Mãn'
+        exp-threshold: 0.95

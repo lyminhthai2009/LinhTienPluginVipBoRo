@@ -1,0 +1,28 @@
+# Cấu hình cho hệ thống Lôi Kiếp khi đột phá.
+# Tên mỗi mục (ví dụ: truc_co, kim_dan) là ID của cảnh giới MÀ NGƯỜI CHƠI SẼ ĐẠT TỚI.
+# Ví dụ, mục 'truc_co' sẽ áp dụng khi người chơi từ Luyện Khí đột phá lên Trúc Cơ.
+# Mặc định, nếu một cảnh giới không được định nghĩa ở đây, sẽ không có lôi kiếp (đột phá thành công ngay).
+
+loi_kiep:
+  truc_co:
+    # Số lần sét đánh
+    so-lan-danh: 5
+    # Sát thương mỗi lần sét đánh (1.0 = nửa tim)
+    sat-thuong: 4.0
+    # Thời gian chờ giữa các lần sét đánh (tính bằng giây)
+    thoi-gian-cho: 3.0
+    # Thông báo khi bắt đầu độ kiếp. Placeholder: {so_lan}
+    thong-bao-bat-dau: "&c&lThiên kiếp đã tới! Hãy chống đỡ {so_lan} đạo thiên lôi để chứng đạo Trúc Cơ!"
+
+  kim_dan:
+    so-lan-danh: 9
+    sat-thuong: 6.0
+    thoi-gian-cho: 2.5
+    thong-bao-bat-dau: "&c&lKim Đan kiếp đại nạn! Vượt qua {so_lan} đạo tử lôi để ngưng tụ Kim Đan!"
+    
+  # Ví dụ cho cảnh giới sau này, bạn có thể thêm vào realms.yml
+  # nguyen_anh: 
+  #   so-lan-danh: 18
+  #   sat-thuong: 8.0
+  #   thoi-gian-cho: 2.0
+  #   thong-bao-bat-dau: "&4&lNguyên Anh chi kiếp, Cửu Tử Nhất Sinh! {so_lan} đạo tịch diệt thần lôi sẽ quyết định vận mệnh của ngươi!"

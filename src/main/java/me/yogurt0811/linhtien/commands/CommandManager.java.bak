@@ -1,0 +1,39 @@
+package me.yogurt0811.linhtien.commands;
+
+import me.yogurt0811.linhtien.LinhTienPlugin;
+import org.bukkit.command.PluginCommand;
+
+public class CommandManager {
+    private final LinhTienPlugin plugin;
+
+    public CommandManager(LinhTienPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public void registerCommands() {
+        // Lệnh cho người chơi
+        registerCommand("tuluyen", new TuLuyenCommand(plugin));
+        registerCommand("dotpha", new DotPhaCommand(plugin));
+        registerCommand("tongmon", new TongMonCommand(plugin));
+        
+        // Lệnh trợ giúp mới
+        registerCommand("linhtien", new LinhTienHelpCommand());
+
+        // Lệnh admin mới
+        LinhTienAdminCommand adminCommand = new LinhTienAdminCommand(plugin);
+        PluginCommand ltaCmd = plugin.getCommand("linhtienadmin");
+        if (ltaCmd != null) {
+            ltaCmd.setExecutor(adminCommand);
+            ltaCmd.setTabCompleter(adminCommand);
+        }
+    }
+
+    private void registerCommand(String commandName, org.bukkit.command.CommandExecutor executor) {
+        PluginCommand command = plugin.getCommand(commandName);
+        if (command != null) {
+            command.setExecutor(executor);
+        } else {
+            plugin.getLogger().warning("Lỗi khi đăng ký lệnh: " + commandName + ". Lệnh không được định nghĩa trong plugin.yml?");
+        }
+    }
+}

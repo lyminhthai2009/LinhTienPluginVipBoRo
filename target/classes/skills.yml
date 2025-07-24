@@ -1,0 +1,75 @@
+skills:
+  'hoa_cau_thuat':
+    name: '&cHỏa Cầu Thuật'
+    lore:
+      - '&7Thi triển một hỏa cầu mạnh mẽ.'
+      - ''
+      - '&fMythic Skill: &aHoaCau'
+      - '&fLinh lực: &b10'
+      - '&fHồi chiêu: &e3s'
+    material: 'FIRE_CHARGE'
+    custom-model-data: 1001
+    cost: 10
+    cooldown: 3
+    mythic-skill-id: 'HoaCau' # ID kỹ năng trong MythicMobs
+    required-realm: 'pham_nhan'
+
+  'van_kiem_trieu_tong':
+    name: '&bVạn Kiếm Triều Tông'
+    lore:
+      - '&7Triệu hồi kiếm trận sát thương diện rộng.'
+      - ''
+      - '&fMythic Skill: &bVanKiem'
+      - '&fLinh lực: &b50'
+      - '&fHồi chiêu: &e15s'
+    material: 'IRON_SWORD'
+    custom-model-data: 1002
+    cost: 50
+    cooldown: 15
+    mythic-skill-id: 'VanKiem'
+    required-realm: 'truc_co'
+
+  'than_hanh_thuat':
+    name: '&eThần Hành Thuật'
+    lore:
+      - '&7Gia tăng tốc độ di chuyển.'
+      - ''
+      - '&fMythic Skill: &eThanHanh'
+      - '&fLinh lực: &b20'
+      - '&fHồi chiêu: &e30s'
+    material: 'FEATHER'
+    custom-model-data: 1003
+    cost: 20
+    cooldown: 30
+    mythic-skill-id: 'ThanHanh'
+    required-realm: 'luyen_khi'
+
+  'loi_anh_buoc':
+    name: '&eLôi Ảnh Bộ'
+    lore:
+      - '&7Lướt đi như một tia chớp.'
+      - ''
+      - '&fMythic Skill: &eLoiAnh'
+      - '&fLinh lực: &b15'
+      - '&fHồi chiêu: &e5s'
+    material: 'RABBIT_FOOT'
+    custom-model-data: 1004
+    cost: 15
+    cooldown: 5
+    mythic-skill-id: 'LoiAnh'
+    required-realm: 'luyen_khi'
+
+  'truy_hon_so':
+    name: '&8Truy Hồn Tác'
+    lore:
+      - '&7Kéo kẻ địch về phía bạn.'
+      - ''
+      - '&fMythic Skill: &8TruyHon'
+      - '&fLinh lực: &b30'
+      - '&fHồi chiêu: &e12s'
+    material: 'LEAD'
+    custom-model-data: 1005
+    cost: 30
+    cooldown: 12
+    mythic-skill-id: 'TruyHon'
+    required-realm: 'truc_co'

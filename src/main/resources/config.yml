@@ -1,0 +1,148 @@
+# Tiền tố hiển thị trong các tin nhắn của plugin
+prefix: '&8[&bLinh&3Tiên&8] &r'
+
+# --- HỆ THỐNG KỸ NĂNG ---
+# Cho phép bật/tắt toàn bộ hệ thống kỹ năng.
+# Nếu đặt là false, người chơi sẽ không nhận được vật phẩm kỹ năng,
+# các lệnh liên quan (như /kynang) và tính năng sẽ bị vô hiệu hóa.
+skills:
+  enabled: false
+
+# Cài đặt cho việc tu luyện
+practice:
+  # Lượng tu vi nhận được mỗi giây khi /tuluyen
+  exp-per-second: 10
+  # --- HỆ THỐNG HIỆU ỨNG TU LUYỆN ---
+  # Hiện tại, chỉ hỗ trợ hiệu ứng hạt ngẫu nhiên (RANDOM)
+  visuals:
+    enabled: true
+    particle: 'ENCHANTMENT_TABLE'
+
+# Cài đặt cho việc đột phá
+breakthrough:
+  # Tỷ lệ thành công cơ bản (có thể bị ảnh hưởng bởi tư chất, đan dược,...)
+  base-success-chance: 0.75 # 75%
+  # Hiệu ứng khi đột phá thành công. Các hiệu ứng này được xử lý bởi Bukkit API cơ bản.
+  success-effects:
+    - 'particle:TOTEM:30:0.5' # particle:<tên>:số lượng:bán kính
+    - 'sound:ENTITY_PLAYER_LEVELUP:1:1' # sound:<tên>:volume:pitch
+    - 'lightning' # hiệu ứng sét đánh
+  # Hiệu ứng khi đột phá thất bại (tẩu hỏa nhập ma)
+  failure-effects:
+    - 'particle:SMOKE_LARGE:50:1.0'
+    - 'sound:ENTITY_GENERIC_EXPLODE:1:0.5'
+    - 'damage:10' # Gây 10 sát thương (5 tim)
+    - 'potion:CONFUSION:10:1' # potion:<tên>:thời gian(giây):cấp độ
+
+# Cài đặt cho các vật phẩm kỹ năng trong túi đồ (KHÔNG CÓ TÁC DỤNG NẾU skills.enabled=false)
+skill-items:
+  slot-1:
+    slot: 5
+    name: '&aKỹ Năng 1'
+    lore:
+      - '&7Nhấn Chuột Phải để sử dụng'
+      - '&7Dùng lệnh /kynang để thiết lập'
+    material: 'ENDER_EYE'
+    custom-model-data: 101
+  slot-2:
+    slot: 6
+    name: '&aKỹ Năng 2'
+    lore:
+      - '&7Nhấn Chuột Phải để sử dụng'
+      - '&7Dùng lệnh /kynang để thiết lập'
+    material: 'ENDER_EYE'
+    custom-model-data: 101
+  slot-3:
+    slot: 7
+    name: '&aKỹ Năng 3'
+    lore:
+      - '&7Nhấn Chuột Phải để sử dụng'
+      - '&7Dùng lệnh /kynang để thiết lập'
+    material: 'ENDER_EYE'
+    custom-model-data: 101
+  slot-4:
+    slot: 8
+    name: '&aKỹ Năng 4'
+    lore:
+      - '&7Nhấn Chuột Phải để sử dụng'
+      - '&7Dùng lệnh /kynang để thiết lập'
+    material: 'ENDER_EYE'
+    custom-model-data: 101
+
+# GIAO DIỆN KỸ NĂNG (/kynang)
+skill-gui:
+  title: "&8Bảng Kỹ Năng Của Bạn"
+  rows: 6
+  items:
+    filler-glass:
+      enabled: true
+      material: 'GRAY_STAINED_GLASS_PANE'
+      name: ' '
+    skill-slots:
+      '1':
+        slot: 11
+        name: '&aÔ Kỹ Năng 1'
+        lore-locked:
+          - '&7Chưa trang bị kỹ năng.'
+          - ''
+          - '&eClick một kỹ năng đã học để trang bị.'
+      '2':
+        slot: 12
+        name: '&aÔ Kỹ Năng 2'
+        lore-locked:
+          - '&7Chưa trang bị kỹ năng.'
+          - ''
+          - '&eClick một kỹ năng đã học để trang bị.'
+      '3':
+        slot: 13
+        name: '&aÔ Kỹ Năng 3'
+        lore-locked:
+          - '&7Chưa trang bị kỹ năng.'
+          - ''
+          - '&eClick một kỹ năng đã học để trang bị.'
+      '4':
+        slot: 14
+        name: '&aÔ Kỹ Năng 4'
+        lore-locked:
+          - '&7Chưa trang bị kỹ năng.'
+          - ''
+          - '&eClick một kỹ năng đã học để trang bị.'
+    learned-skills-slots: [28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43]
+
+# Tin nhắn - có thể tùy chỉnh
+messages:
+  breakthrough-cancelled: '&cQuá trình đột phá đã bị hủy bỏ bởi một yếu tố bên ngoài.'
+  reload-success: '&aĐã tải lại cấu hình của LinhTienPlugin thành công!'
+  no-permission: '&cBạn không có quyền để thực hiện lệnh này.'
+  player-only-command: '&cChỉ người chơi mới có thể dùng lệnh này.'
+  practice-start: '&aBạn bắt đầu nhắm mắt tĩnh tọa, linh khí đang hội tụ...'
+  practice-stop: '&eBạn đã dừng tu luyện.'
+  already-practicing: '&cBạn đang tu luyện rồi.'
+  breakthrough-not-ready: '&eTu vi của bạn chưa đủ để đột phá!'
+  breakthrough-attempt: '&6Bạn bắt đầu vận công, nỗ lực đột phá bình cảnh!'
+  breakthrough-success: '&b&lCHÚC MỪNG! &fBạn đã đột phá thành công, tiến vào &e{realm_name}&f!'
+  breakthrough-fail: '&c&lTẨU HỎA NHẬP MA! &fĐột phá thất bại, tu vi của bạn bị tổn hại!'
+  breakthrough-max-realm: '&cBạn đã đạt tới cảnh giới cao nhất, không thể đột phá được nữa.'
+  skill-no-skill-equipped: '&cÔ kỹ năng này chưa được trang bị!'
+  skill-on-cooldown: '&cKỹ năng &e{skill_name} &cđang trong thời gian hồi! (&e{time}s&c)'
+  talent-assigned: '&fTư chất của bạn được xác định là: {talent_name}'
+  sect-created: '&aBạn đã sáng lập thành công tông môn &e{sect_name}&a!'
+  sect-already-in-one: '&cBạn đã ở trong một tông môn rồi.'
+  sect-name-taken: '&cTên tông môn này đã tồn tại.'
+  sect-joined: '&aBạn đã gia nhập tông môn &e{sect_name}&a!'
+  sect-not-found: '&cKhông tìm thấy tông môn này.'
+  sect-left: '&eBạn đã rời khỏi tông môn.'
+  sect-not-in-one: '&cBạn không ở trong tông môn nào cả.'
+  sect-owner-cant-leave: '&cBạn là Tông Chủ! Hãy chuyển chức cho người khác trước khi rời đi.'
+  sect-disbanded: '&cBạn là thành viên cuối cùng, tông môn đã được giải tán.'
+  skill-no-mana: '&cKhông đủ linh lực để thi triển &e{skill_name}&c!'
+  admin-player-not-found: '&cKhông tìm thấy người chơi &e{player_name}&c hoặc họ đang offline.'
+  admin-realm-not-found: '&cKhông tìm thấy cảnh giới với ID &e{realm_id}&c.'
+  admin-talent-not-found: '&cKhông tìm thấy tư chất với ID &e{talent_id}&c.'
+  admin-invalid-number: '&cGiá trị &e{number} &ckhông phải là một con số hợp lệ.'
+  admin-set-realm-success: '&aĐã đặt cảnh giới của &e{player_name} &athành &b{realm_name}&a.'
+  admin-set-exp-success: '&aĐã đặt tu vi của &e{player_name} &athành &b{amount}&a.'
+  admin-add-exp-success: '&aĐã cộng &b{amount} &atu vi cho &e{player_name}&a.'
+  admin-set-talent-success: '&aĐã đặt tư chất của &e{player_name} &athành &b{talent_name}&a.'
+  admin-player-info-header: '&8&m        &r &bThông tin Tu Luyện của {player_name} &8&m        '
+  admin-player-info-line: '&3- &b{key}: &f{value}'

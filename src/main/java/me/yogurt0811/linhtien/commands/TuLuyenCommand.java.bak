@@ -1,0 +1,41 @@
+package me.yogurt0811.linhtien.commands;
+
+import me.yogurt0811.linhtien.LinhTienPlugin;
+import me.yogurt0811.linhtien.config.MessageUtils;
+import me.yogurt0811.linhtien.practice.PracticeManager;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+public class TuLuyenCommand implements CommandExecutor {
+    private final LinhTienPlugin plugin;
+    private final PracticeManager practiceManager;
+
+    public TuLuyenCommand(LinhTienPlugin plugin) {
+        this.plugin = plugin;
+        this.practiceManager = plugin.getPracticeManager();
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            MessageUtils.sendMessage(sender, "player-only-command");
+            return true;
+        }
+
+        boolean isPracticing = practiceManager.isPracticing(player);
+        
+        // Bắt đầu hoặc dừng tu luyện
+        practiceManager.togglePractice(player);
+        
+        if (!isPracticing) {
+            MessageUtils.sendMessage(player, "practice-start");
+        } else {
+            MessageUtils.sendMessage(player, "practice-stop");
+        }
+
+        return true;
+    }
+}

@@ -1,0 +1,24 @@
+# Danh sách các tư chất.
+# exp-bonus: Hệ số nhân với lượng tu vi nhận được. 1.0 = không bonus, 1.2 = +20%
+# breakthrough-bonus: Bonus cộng thêm vào tỷ lệ đột phá thành công. 0.05 = +5%
+talents:
+  'pham_the':
+    display-name: '&7Phàm Thể'
+    exp-bonus: 1.0
+    breakthrough-bonus: 0.0
+  'linh_can':
+    display-name: '&aLinh Căn'
+    exp-bonus: 1.2
+    breakthrough-bonus: 0.05
+  'dao_the':
+    display-name: '&bĐạo Thể'
+    exp-bonus: 1.5
+    breakthrough-bonus: 0.10
+  'thanh_the':
+    display-name: '&eThánh Thể'
+    exp-bonus: 2.0
+    breakthrough-bonus: 0.15
+  'hon_don_the':
+    display-name: '&5&lHỗn Độn Thể'
+    exp-bonus: 3.0
+    breakthrough-bonus: 0.25

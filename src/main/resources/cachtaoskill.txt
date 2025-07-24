@@ -1,0 +1,53 @@
+===========================================================
+    HƯỚNG DẪN TẠO SKILL CHO LINHTIENPLUGINVIPBORO
+===========================================================
+
+Chào bạn, đây là file hướng dẫn tự động được tạo ra để
+giúp bạn định nghĩa các kỹ năng mới trong file skills.yml.
+
+Lưu ý: Plugin này sử dụng MythicMobs để tạo các hiệu ứng và hành vi của kỹ năng.
+Bạn cần định nghĩa skill chi tiết trong file skills.yml của MythicMobs.
+
+CẤU TRÚC CƠ BẢN CỦA MỘT SKILL (trong skills.yml của plugin này):
+
+ten_skill_id:
+  name: '&cTên Hiển Thị Của Skill'
+  lore:
+    - '&7Dòng mô tả 1'
+    - '&7Dòng mô tả 2'
+    - ''
+    - '&fMythic Skill: &aID_SKILL_TRONG_MYTHICMOBS'
+    - '&fLinh lực: &b<số>'
+    - '&fHồi chiêu: &e<số>s'
+  material: 'MINECRAFT_ITEM_ID' # Vật phẩm hiển thị trong GUI và Hotbar
+  custom-model-data: 1001       # Custom Model Data cho texture pack (tùy chọn)
+  cost: <số>                    # Linh lực tiêu tốn
+  cooldown: <số>                # Thời gian hồi chiêu (giây)
+  required-realm: 'id_canh_gioi' # ID cảnh giới yêu cầu để học/dùng skill (tùy chọn)
+  mythic-skill-id: 'ID_SKILL_TRONG_MYTHICMOBS' # ID kỹ năng đã định nghĩa trong MythicMobs
+
+VÍ DỤ HOÀN CHỈNH:
+
+my_lightning_skill:
+  name: '&eLôi Kiếp Thuật'
+  lore:
+    - '&7Triệu hồi sét đánh từ trên cao.'
+    - ''
+    - '&fMythic Skill: &eMyLightningSkillMM'
+    - '&fLinh lực: &b50'
+    - '&fHồi chiêu: &e10s'
+  material: 'BLAZE_ROD'
+  custom-model-data: 1008
+  cost: 50
+  cooldown: 10
+  required-realm: 'truc_co'
+  mythic-skill-id: 'MyLightningSkillMM'
+
+Để tạo MyLightningSkillMM trong MythicMobs (ví dụ: trong plugins/MythicMobs/Skills/MySkills.yml):
+
+MyLightningSkillMM:
+  Skills:
+  - Lightning @Target # Sét đánh mục tiêu gần nhất
+  - sound{s=entity.lightning_bolt.thunder;v=1;p=1} @Target
+
+File này sẽ được tạo lại nếu bạn xóa nó đi. Chúc bạn tạo ra những kỹ năng tuyệt vời!

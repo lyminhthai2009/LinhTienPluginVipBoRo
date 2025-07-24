@@ -1,0 +1,151 @@
+package me.yogurt0811.linhtien.commands;
+
+import me.yogurt0811.linhtien.LinhTienPlugin;
+import me.yogurt0811.linhtien.config.MessageUtils;
+import me.yogurt0811.linhtien.data.PlayerData;
+import me.yogurt0811.linhtien.events.PlayerRealmChangeEvent;
+import me.yogurt0811.linhtien.realms.Realm;
+import me.yogurt0811.linhtien.talents.Talent;
+import org.bukkit.Bukkit;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import me.yogurt0811.linhtien.events.PlayerBreakthroughChanceEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.logging.Level;
+
+public class DotPhaCommand implements CommandExecutor {
+
+    private final LinhTienPlugin plugin;
+
+    public DotPhaCommand(LinhTienPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
+            MessageUtils.sendMessage(sender, "player-only-command");
+            return true;
+        }
+
+        PlayerData data = plugin.getPlayerDataManager().getPlayerData(player);
+        if (data == null) return true;
+
+        Realm currentRealm = plugin.getRealmManager().getPlayerRealm(data);
+        if (currentRealm == null) return true;
+
+        if (data.getCurrentExp() < currentRealm.expToNext()) {
+            MessageUtils.sendMessage(player, "breakthrough-not-ready");
+            return true;
+        }
+
+        Realm nextRealm = plugin.getRealmManager().getNextRealm(currentRealm.id());
+        if(nextRealm == null) {
+            MessageUtils.sendMessage(player, "breakthrough-max-realm");
+            return true;
+        }
+
+        MessageUtils.sendMessage(player, "breakthrough-attempt");
+
+        FileConfiguration mainConfig = plugin.getConfigManager().getConfig();
+
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            double baseSuccessChance = mainConfig.getDouble("breakthrough.base-success-chance", 0.75);
+            Talent talent = plugin.getTalentManager().getTalent(data.getTalentId());
+            double talentBonus = (talent != null) ? talent.breakthroughBonus() : 0.0;
+            double currentCalculatedChance = baseSuccessChance + talentBonus;
+            
+            // NEW: Call custom event to allow other plugins to modify the final chance
+            PlayerBreakthroughChanceEvent breakthroughEvent = new PlayerBreakthroughChanceEvent(player, currentCalculatedChance);
+            Bukkit.getPluginManager().callEvent(breakthroughEvent);
+
+            if (breakthroughEvent.isCancelled()) {
+                MessageUtils.sendMessage(player, "breakthrough-cancelled"); // Thêm tin nhắn này vào config.yml
+                data.setCurrentExp(data.getCurrentExp() * 0.8); // Vẫn trừ EXP nếu bị hủy đột phá
+                plugin.getPlayerDataManager().savePlayerData(data);
+                List<String> failureEffects = mainConfig.getStringList("breakthrough.failure-effects"); // Vẫn áp dụng hiệu ứng thất bại
+                handleEffects(player, failureEffects);
+                return;
+            }
+
+            double finalChance = Math.min(1.0, breakthroughEvent.getFinalChance()); // Use modified chance from event
+            finalChance = Math.max(0.0, finalChance); // Ensure chance is not negative
+
+            if (Math.random() < finalChance) {
+                Realm oldRealm = currentRealm;
+                data.setRealmId(nextRealm.id());
+                data.setCurrentExp(0);
+                plugin.getPlayerDataManager().savePlayerData(data);
+                MessageUtils.sendMessage(player, "breakthrough-success", "realm_name", nextRealm.displayName());
+                
+                Bukkit.getPluginManager().callEvent(new PlayerRealmChangeEvent(player, oldRealm, nextRealm));
+
+                List<String> successEffects = mainConfig.getStringList("breakthrough.success-effects");
+                handleEffects(player, successEffects);
+
+            } else {
+                data.setCurrentExp(data.getCurrentExp() * 0.8);
+                plugin.getPlayerDataManager().savePlayerData(data);
+                MessageUtils.sendMessage(player, "breakthrough-fail");
+
+                List<String> failureEffects = mainConfig.getStringList("breakthrough.failure-effects");
+                handleEffects(player, failureEffects);
+            }
+        }, 60L);
+
+        return true;
+    }
+
+    private void handleEffects(Player player, List<String> effects) {
+        for (String effectString : effects) {
+            try {
+                String[] parts = effectString.split(":");
+                String type = parts[0].toLowerCase();
+                
+                switch (type) {
+                    case "particle":
+                        Particle particle = Particle.valueOf(parts[1].toUpperCase());
+                        int count = Integer.parseInt(parts[2]);
+                        double radius = Double.parseDouble(parts[3]);
+                        player.getWorld().spawnParticle(particle, player.getLocation().add(0, 1, 0), count, radius, radius, radius, 0);
+                        break;
+                    case "sound":
+                        Sound sound = Sound.valueOf(parts[1].toUpperCase());
+                        float volume = Float.parseFloat(parts[2]);
+                        float pitch = Float.parseFloat(parts[3]);
+                        player.playSound(player.getLocation(), sound, volume, pitch);
+                        break;
+                    case "lightning":
+                        player.getWorld().strikeLightningEffect(player.getLocation());
+                        break;
+                    case "damage":
+                        double damage = Double.parseDouble(parts[1]);
+                        player.damage(damage);
+                        break;
+                    case "potion":
+                        PotionEffectType effectType = PotionEffectType.getByName(parts[1].toUpperCase());
+                        if (effectType != null) {
+                            int duration = Integer.parseInt(parts[2]) * 20;
+                            int amplifier = Integer.parseInt(parts[3]) - 1;
+                            player.addPotionEffect(new PotionEffect(effectType, duration, amplifier, true, false));
+                        }
+                        break;
+                    default:
+                        plugin.getLogger().warning("Hiệu ứng không xác định trong config đột phá: " + effectString);
+                        break;
+                }
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "Lỗi khi thực thi hiệu ứng đột phá: " + effectString, e);
+            }
+        }
+    }
+}
