@@ -1,56 +1,90 @@
-name: ${project.name}
-version: ${project.version}
+# Các giá trị ${...} sẽ được Gradle/Maven tự động thay thế khi build.
+# Điều này giúp bạn chỉ cần thay đổi phiên bản ở một nơi duy nhất (build.gradle hoặc pom.xml).
+name: ${name}
+version: ${version}
+description: ${description}
+
+# Thông tin cơ bản của plugin
 main: me.yogurt0811.linhtien.LinhTienPlugin
 api-version: '1.20'
 authors: [Yogurt0811]
-description: ${project.description}
 prefix: 'LinhTien'
-depend: [MythicMobs] # THAY ĐỔI: Phụ thuộc cứng vào MythicMobs
-softdepend: [PlaceholderAPI, ModelEngine] # THÊM SOFTDEPEND CHO MODELENGINE
 
+# --- Dependencies ---
+# Phụ thuộc cứng: Plugin của bạn sẽ KHÔNG được bật nếu thiếu các plugin này.
+depend: [MythicMobs]
+
+# Phụ thuộc mềm: Plugin của bạn VẪN sẽ được bật nếu thiếu, nhưng một số tính năng có thể không hoạt động.
+# GSit là softdepend vì chúng ta có kiểm tra sự tồn tại của nó trong code.
+softdepend: [PlaceholderAPI, GSit]
+
+# --- Commands ---
+# Danh sách các lệnh mà plugin đăng ký.
 commands:
   tuluyen:
     description: Bắt đầu hoặc dừng tu luyện.
     usage: /tuluyen
     permission: linhtien.command.tuluyen
   dotpha:
-    description: Cố gắng đột phá cảnh giới.
+    description: Cố gắng đột phá cảnh giới (có thể kích hoạt Lôi Kiếp).
     usage: /dotpha
     permission: linhtien.command.dotpha
-  kynang:
-    description: Mở giao diện kỹ năng.
-    usage: /kynang
-    aliases: [kn]
-    permission: linhtien.command.kynang
+  # Lệnh /kynang đã được tạm thời loại bỏ vì hệ thống kỹ năng đang tắt.
+  # kynang:
+  #   description: Mở giao diện kỹ năng.
+  #   usage: /kynang
+  #   aliases: [kn]
+  #   permission: linhtien.command.kynang
   tongmon:
     description: Quản lý tông môn.
     usage: /tongmon <create|leave|...>
     aliases: [tm]
     permission: linhtien.command.tongmon
   linhtien:
-    description: Hiển thị trợ giúp plugin.
+    description: Hiển thị trợ giúp và thông tin plugin.
     usage: /linhtien
     aliases: [lt]
     permission: linhtien.command.help 
   linhtienadmin:
-    description: Lệnh quản trị chính.
+    description: Lệnh quản trị chính cho LinhTienPlugin.
     usage: /linhtienadmin <player|reload|skill|giveskillbook>
     aliases: [lta]
     permission: linhtien.admin
 
+# --- Permissions ---
+# Định nghĩa các quyền (permissions) cho plugin.
 permissions:
   linhtien.*:
-    description: Cấp tất cả quyền của plugin.
+    description: Cấp tất cả các quyền của LinhTienPlugin.
     children: [linhtien.admin, linhtien.player]
+  
   linhtien.admin:
-    description: Quyền quản trị (/lta).
+    description: Quyền quản trị cho các lệnh /linhtienadmin.
     default: op
+    
   linhtien.player:
     description: Quyền cơ bản cho người chơi.
     default: true
-    children: [linhtien.command.help, linhtien.command.tuluyen, linhtien.command.dotpha, linhtien.command.kynang, linhtien.command.tongmon]
-  linhtien.command.help: { default: true }
-  linhtien.command.tuluyen: { default: true }
-  linhtien.command.dotpha: { default: true }
-  linhtien.command.kynang: { default: true }
-  linhtien.command.tongmon: { default: true }
+    children: 
+      - linhtien.command.help
+      - linhtien.command.tuluyen
+      - linhtien.command.dotpha
+      - linhtien.command.tongmon
+      # - linhtien.command.kynang # Đã tạm thời loại bỏ
+
+  # Định nghĩa quyền cho từng lệnh cụ thể
+  linhtien.command.help: 
+    description: Cho phép sử dụng lệnh /linhtien.
+    default: true
+  linhtien.command.tuluyen:
+    description: Cho phép sử dụng lệnh /tuluyen.
+    default: true
+  linhtien.command.dotpha:
+    description: Cho phép sử dụng lệnh /dotpha.
+    default: true
+  linhtien.command.tongmon:
+    description: Cho phép sử dụng lệnh /tongmon.
+    default: true
+  # linhtien.command.kynang:
+  #   description: Cho phép sử dụng lệnh /kynang.
+  #   default: true

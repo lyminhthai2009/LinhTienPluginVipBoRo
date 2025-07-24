@@ -1,0 +1,74 @@
+// build.gradle
+
+// --- Phần Plugins ---
+// Áp dụng các plugin cần thiết cho việc build project Java và đóng gói
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1' // Tương đương maven-shade-plugin
+}
+
+
+// --- Phần thông tin Project ---
+group = 'me.yogurt0811'
+version = '2.5.8'
+description = 'The most beautiful, powerful, and expandable cultivation (Tu Tiên) plugin for Vietnamese servers.'
+
+
+// --- Cấu hình Java ---
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+
+// --- Kho lưu trữ (Repositories) ---
+// Nơi Gradle sẽ tìm kiếm các dependency
+repositories {
+    mavenCentral() // Kho Maven trung tâm
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
+    maven { url = 'https://jitpack.io' }
+}
+
+
+// --- Thư viện phụ thuộc (Dependencies) ---
+dependencies {
+    // Paper API
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    
+    // PlaceholderAPI
+    compileOnly 'me.clip:placeholderapi:2.11.5'
+    
+    // MythicMobs API
+    compileOnly 'io.lumine:Mythic-Dist:5.6.1'
+
+    // GSit API - Sử dụng khai báo chuẩn của JitPack
+    compileOnly 'com.github.Gecolay.GSit:API:2.4.3.0'
+}
+
+
+// --- Cấu hình cho việc Build và Đóng gói ---
+processResources {
+    def props = [
+            'version': project.version,
+            'name': project.name,
+            'description': project.description
+    ]
+    inputs.properties(props)
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+shadowJar {
+    archiveClassifier.set('') // Xóa hậu tố "-all" khỏi tên file jar
+    // Nếu bạn cần đóng gói thư viện nào đó vào plugin (không phải 'provided'),
+    // hãy thêm cấu hình relocation ở đây.
+    // Ví dụ: relocate 'org.bstats', 'me.yogurt0811.linhtien.libs.bstats'
+}
+
+// Lệnh 'build' sẽ tự động chạy 'shadowJar'
+build {
+    dependsOn shadowJar
+}
