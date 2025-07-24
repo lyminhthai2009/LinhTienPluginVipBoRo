@@ -1,0 +1,46 @@
+# Tên của workflow, sẽ hiển thị trên tab "Actions" của GitHub
+name: Build LinhTienPlugin
+
+# Điều kiện kích hoạt workflow
+on:
+  # Chạy khi có code được push lên nhánh 'main'
+  push:
+    branches: [ "main" ]
+  # Cũng cho phép chạy thủ công từ tab Actions
+  workflow_dispatch:
+
+# Các công việc (jobs) sẽ được thực hiện
+jobs:
+  build:
+    # Sử dụng máy ảo Ubuntu phiên bản mới nhất
+    runs-on: ubuntu-latest
+
+    # Các bước (steps) trong công việc 'build'
+    steps:
+      # Bước 1: Tải mã nguồn từ repository của bạn vào máy ảo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Bước 2: Cài đặt môi trường Java JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven # Bật cache cho Maven để các lần build sau nhanh hơn
+
+      # Bước 3: Build project bằng Maven
+      # Chạy lệnh build, -B là chế độ batch (không tương tác)
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      # Bước 4: Tải lên artifact (file .jar đã build)
+      # Lưu file .jar đã hoàn thành để bạn có thể tải về
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Tên của artifact khi tải lên
+          name: LinhTienPluginVipBoRo-Build
+          # Đường dẫn tới file cần tải lên.
+          # 'target/*.jar' sẽ tự động tìm file .jar duy nhất trong thư mục target.
+          path: target/*.jar
