@@ -31,8 +31,9 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
+        <!-- KHO LƯU TRỮ CHO GSIT -->
         <repository>
-            <id>jitpack</id>
+            <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
@@ -62,12 +63,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- SỬA LỖI GSit API: Dùng artifactId là 'API' -->
+        <!-- GSit API - SỬA LẠI THEO ĐÚNG HƯỚNG DẪN BẠN GỬI -->
         <dependency>
             <groupId>com.github.Gecolay.GSit</groupId>
-            <artifactId>API</artifactId> <!-- THAY ĐỔI QUAN TRỌNG NHẤT -->
-            <version>2.4.3.0</version>
+            <artifactId>GSit</artifactId> <!-- Sửa thành tên Repo -->
+            <version>2.4.3.0</version> <!-- Giữ nguyên .0 cho an toàn, nhưng 2.4.3 cũng được -->
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
